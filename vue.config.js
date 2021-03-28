@@ -5,9 +5,10 @@ module.exports = {
       // 起别名
       alias: {
         'common': '@/common',
-        'componets': '@/componets',
+        'components': '@/components',
         'network': '@/network',
-        'views': '@/views'
+        'views': '@/views',
+        'assets': '@/assets:'
       }
     }
   }
