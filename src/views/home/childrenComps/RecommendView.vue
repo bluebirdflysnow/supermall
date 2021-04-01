@@ -49,8 +49,8 @@
   }
 
   .recommend-item img {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     margin-bottom: 10px;
   }
 

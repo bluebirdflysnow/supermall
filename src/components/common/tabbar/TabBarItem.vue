@@ -10,22 +10,26 @@
 	export default {
 		name: "TabBarItem",
     props: {
-			link: {
+			path: {
 				type: String,
         required: true
+      },
+      activeColor: {
+        type: String,
+        default: 'red'
       }
     },
     computed: {
 			isActive() {
-				return this.$route.path.indexOf(this.link) !== -1
+				return this.$route.path.indexOf(this.path) !== -1
       },
       activeStyle() {
-				return this.isActive ? {'color': 'red'} : {}
+				return this.isActive ? {color: this.activeColor} : {}
       }
     },
     methods: {
 			itemClick() {
-				this.$router.replace(this.link)
+				this.$router.replace(this.path)
       }
     }
 	}
@@ -46,6 +50,5 @@
   .item-text {
     font-size: 12px;
     margin-top: 3px;
-    color: #333;
   }
 </style>
