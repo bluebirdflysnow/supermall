@@ -39,13 +39,18 @@
         pullUpLoad: this.pullUpLoad
       })
 
-      this.scroll.on('scroll', (position) => {
-        this.$emit('scrollPosition', position);
-      }) 
-
-      this.scroll.on('pullingUp', () => {
-        this.$emit('pullingUp');
-      })
+      if (this.probeType === 2 || this.probeType === 3) {
+        this.scroll.on('scroll', (position) => {
+          this.$emit('scrollPosition', position);
+        }) 
+      }
+      
+      if (this.pullUpLoad) {
+        this.scroll.on('pullingUp', () => {
+          this.$emit('pullingUp');
+        })
+      }
+      
     },
     methods: {
       /* 监听回到顶部的点击事件 */
