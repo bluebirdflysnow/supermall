@@ -2,7 +2,10 @@
   <div id="home">
     <!-- 导航栏 -->
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-  
+    <tab-control class="tab-control top-topControl" 
+                  :titles="['流行', '新款', '精选']" 
+                  @tabClick="tabClick"
+                  ref="tabControl1" v-show="isTabFixed"/>
     <scroll class="content" 
             ref="scroll" 
             :probe-type="3" 
@@ -10,11 +13,14 @@
             :pullUpLoad="true"
             @pullingUp="loadMore">
       <!-- 轮播图 -->
-      <home-swiper :banners="banners"/>
+      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"/>
       <!-- 推荐 -->
       <recommend-view :recommends="recommends"/>
       <feature-view/>
-      <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick"/>
+      <tab-control class="tab-control" 
+                  :titles="['流行', '新款', '精选']" 
+                  @tabClick="tabClick"
+                  ref="tabControl2"/>
       <goods-list :goods="showGoods"/>
     </scroll>
     <!-- 组件设置点击事件须使用native关键字 -->
@@ -60,7 +66,9 @@
           'sell': {page: 0, list: []}
         },
         currentType: 'pop',
-        isShowBackTop: false
+        isShowBackTop: false,
+        tabOffsetTop: 0,
+        isTabFixed: false
       };
     },
 
@@ -86,6 +94,7 @@
       this.$bus.$on('itemImageLoad', () => {
         refresh();
       })
+
     },
     methods: {
       /**
@@ -103,6 +112,8 @@
             this.currentType = 'sell'
             break;
         }
+        this.$refs.tabControl1.currentIndex = index;
+        this.$refs.tabControl2.currentIndex = index;
       },
 
       /* 监听回到顶部的点击事件 */
@@ -112,7 +123,11 @@
 
       /* 监听滚动的位置，当滚动到一定位置时设置backTop显示或者隐藏 */
       scrollPosition(position) {
+        // 1、判断把backTop是否显示
         this.isShowBackTop = (-position.y) > 1000;
+
+        // 2、决定tabbarControl是否吸顶
+        this.isTabFixed = (-position.y) > this.tabOffsetTop;
       },
 
       /* 上拉加载更多 */
@@ -120,6 +135,12 @@
         this.getHomeGoods(this.currentType);
       },
 
+      // 获取tabcontrol的offsetTop
+      // 所有组件都有个$el属性，这个属性用于获取组件中的元素
+      swiperImageLoad() {
+        this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
+      },
+      
       /**
        * 网络请求相关方法
        */
@@ -154,21 +175,33 @@
   .home-nav {
     background-color: var(--color-tint); /* 设置背景颜色 */
     color: white;
-
-    position: fixed;
+     /* 在使用浏览器原生滚动时使用 */
+    /* position: fixed;
     left: 0;
     right: 0;
     top: 0;
+    z-index: 9; */
+  }
+
+  .top-topControl {
+    position: relative;
     z-index: 9;
   }
 
   .tab-control {
-    position: sticky; /* 设置粘性属性，当滚动条滑动到一定位置，则将元素位置固定 */
-    top: 44px;
+    /* position: sticky; 设置粘性属性，当滚动条滑动到一定位置，则将元素位置固定 */
+    /* top: 44px; */
     background-color: #fff;
 
     z-index: 9;
   }
+
+  /* .fiexd {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 44px;
+  } */
 
   /* .content {
     height: calc(100%-93px);
