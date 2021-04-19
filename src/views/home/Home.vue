@@ -68,7 +68,8 @@
         currentType: 'pop',
         isShowBackTop: false,
         tabOffsetTop: 0,
-        isTabFixed: false
+        isTabFixed: false,
+        saveY: 0
       };
     },
 
@@ -77,6 +78,7 @@
         return this.goods[this.currentType].list
       }
     },
+
     created() {
       // 1、请求多个数据（轮播图）
       this.getHomeMultidata()
@@ -88,6 +90,19 @@
 
       
     },
+
+    activated() {
+      // console.log('actived');
+      this.$refs.scroll.scrollTo(0, this.saveY, 0);
+      this.$refs.scroll.refresh();
+    },
+
+    deactivated() {
+      // console.log('deactived');
+      this.saveY = this.$refs.scroll.getScrollY();
+      // console.log(this.saveY);
+    },
+
     mounted() {
       const refresh = debounce(this.$refs.scroll.refresh, 500);
       // 3、监听item中图片加载完成
