@@ -2,7 +2,7 @@
   <div class="detail-swiper">
     <swiper class="my-swiper">
       <swiper-item v-for="item in topImages" :key="item.index">
-        <img :src="item" alt="" srcset="">
+        <img :src="item" alt="" srcset="" @load="imageLoad">
       </swiper-item>
     </swiper>
   </div>
@@ -35,7 +35,10 @@
       
     },
     methods: {
-      
+      imageLoad() {
+        // 事件总线，发射事件
+        this.$bus.$emit('itemImageLoad');
+      }
     },
   };
 </script>

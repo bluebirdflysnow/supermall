@@ -109,7 +109,7 @@
       this.$bus.$on('itemImageLoad', () => {
         refresh();
       })
-
+      console.log(this.$refs.scroll.scroll);
     },
     methods: {
       /**

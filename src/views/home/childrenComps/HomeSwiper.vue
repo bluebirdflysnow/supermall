@@ -39,7 +39,7 @@
       imageLoad() {
         if (!this.isLoad) {
           this.$emit('swiperImageLoad');
-         this.isLoad = true;
+          this.isLoad = true;
         }
       }
     }
