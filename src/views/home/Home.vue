@@ -41,7 +41,8 @@
   import BackTop from 'components/content/backTop/BackTop'
 
   import {getHomeMultidata, getHomeGoods} from 'network/home'
-  import {debounce} from 'common/utils.js'
+  import {itemListenerMixin} from 'common/mixin.js'
+
   export default {
     name: 'Home',
     components: {
@@ -69,10 +70,10 @@
         isShowBackTop: false,
         tabOffsetTop: 0,
         isTabFixed: false,
-        saveY: 0
+        saveY: 0,
       };
     },
-
+    mixins: [itemListenerMixin],
     computed: {
       showGoods() {
         return this.goods[this.currentType].list
@@ -101,15 +102,10 @@
       // console.log('deactived');
       this.saveY = this.$refs.scroll.getScrollY();
       // console.log(this.saveY);
+      this.$bus.$off('itemImageLoad', this.itemListener);
     },
 
     mounted() {
-      const refresh = debounce(this.$refs.scroll.refresh, 500);
-      // 3、监听item中图片加载完成
-      this.$bus.$on('itemImageLoad', () => {
-        refresh();
-      })
-      console.log(this.$refs.scroll.scroll);
     },
     methods: {
       /**

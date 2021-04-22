@@ -10,6 +10,8 @@
       <detail-shop-info :shop="shop"/>
       <detail-goods-info :detail-info="detailInfo"/>
       <detail-params-info :param-info="paramInfo"/>
+      <detail-comment-info :comment-info="commentInfo"/>
+      <goods-list :goods="recommends"/>
     </scroll>
     
   </div>
@@ -23,11 +25,13 @@
   import DetailShopInfo from './childComps/DetailShopInfo'
   import DetailGoodsInfo from './childComps/DetailGoodsInfo'
   import DetailParamsInfo from './childComps/DetailParamsInfo'
+  import DetailCommentInfo from './childComps/DetailCommentInfo'
 
   import Scroll from 'components/common/scroll/Scroll'
-  
-  import {getDetails, Goods, Shop} from 'network/detail'
-  import {debounce} from 'common/utils.js'
+  import GoodsList from 'components/content/goods/GoodsList'
+
+  import {getDetails, getRecommend, Goods, Shop} from 'network/detail'
+  import {itemListenerMixin} from 'common/mixin.js'
   
   export default {
     name: 'Detail',
@@ -38,7 +42,9 @@
       DetailShopInfo,
       DetailGoodsInfo,
       DetailParamsInfo,
-      Scroll
+      DetailCommentInfo,
+      Scroll,
+      GoodsList
     },
     data() {
       return {
@@ -47,10 +53,12 @@
         goods: {},
         shop: {},
         detailInfo: {},
-        paramInfo: {}
-    };
+        paramInfo: {},
+        commentInfo: {},
+        recommends: []
+      }
     },
-
+    mixins: [itemListenerMixin],
     created() {
       // 1、保存传入的iid
       this.iid = this.$route.params.iid;
@@ -73,16 +81,24 @@
 
         // 5、获取商品参数信息
         this.paramInfo = data.itemParams;
+
+        // 6、取出评论信息
+        if (data.rate.cRate != 0) {
+          this.commentInfo = data.rate.list[0];
+        }
       })
 
+      // 3、请求推荐数据
+      getRecommend().then(res => {
+        this.recommends = res.data.list;
+      })
     },
 
     mounted() {
-      const refresh = debounce(this.$refs.scroll.refresh, 500);
-      // 3、监听item中图片加载完成
-      this.$bus.$on('itemImageLoad', () => {
-        refresh();
-      })
+      
+    },
+    destroyed() {
+      this.$bus.$off('itemImageLoad', this.itemListener);
     },
     methods: {
       
